@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import axios from 'axios';
-import "./ServicePageStyles.css"
+import React, { useState } from 'react';
+import "./ServicePageStyles.css";
 const ServicePage = () => {
     const [symptom, setSymptom] = useState('');
     const [disease, setDisease] = useState('');
@@ -13,7 +13,7 @@ const ServicePage = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/your-flask-api-endpoint', {
+            const response = await axios.post('/predict', {
                 symptom: symptom,
             });
 
@@ -27,14 +27,14 @@ const ServicePage = () => {
     return (
         <div className="service-container">
             <h1>Service Page</h1>
-            <form onSubmit={handleSubmit}>                
+            <form onSubmit={handleSubmit}>
                     <input
                         placeholder="Enter the symptoms"
                         type="text"
                         value={symptom}
                         onChange={handleInputChange}
                     />
-  
+
                 <button type="submit">Submit</button>
             </form>
             {disease && <p>Result: {disease}</p>}

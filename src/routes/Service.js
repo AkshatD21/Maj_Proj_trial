@@ -1,8 +1,8 @@
-import React from 'react'
-import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
+import React from 'react';
 import AboutImg from "../assets/night.jpg";
 import Footer from '../components/Footer';
+import Hero from "../components/Hero";
+import Navbar from "../components/Navbar";
 import ServicePage from '../components/ServicePage';
 
 const Service = () => {
@@ -21,4 +21,4 @@ const Service = () => {
   )
 }
 
-export default Service
+export default Service;

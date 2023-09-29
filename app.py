@@ -2,41 +2,31 @@ import pickle
 
 import numpy as np
 import pandas as pd
-from flask import Flask, redirect, render_template, request, url_for
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 
-# from sklearn.externals import joblib
 import predictor as predict
 import preprocessor as preproc
 
 pp = preproc.preprocessor()
-model = pickle.load(open('model.pkl','rb'))
-# load the model from disk
-# filename = 'nlp_model.pkl'
-# clf = pickle.load(open(filename, 'rb'))
-# cv=pickle.load(open('tranform.pkl','rb'))
-
+model = pickle.load(open('model.pkl', 'rb'))
 app = Flask(__name__)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
-@app.route('/')
-def index():
-	return render_template('index.html')
-
-@app.route('/submit', methods=['POST'])
-def submit():
-	if request.method == 'POST':
-		text = request.form.get('symptoms')
-		text = pp.forward(text)
-		my_prediction = model.predict(text)
-		my_prediction = np.array2string(my_prediction)
-	return redirect(url_for("predict",prediction = my_prediction))
-
-@app.route('/predict/<prediction>')
-def predict(prediction):
-	return render_template('result.html',prediction = prediction)
+@app.route('/predict', methods=['POST'])
+def predict_disease():
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            symptoms = data.get('symptoms','')  # Assuming 'symptoms' is the key in the JSON request
+            symptoms = pp.forward(symptoms)
+            my_prediction = model.predict([symptoms])
+            my_prediction = np.array2string(my_prediction)
+            return jsonify({'prediction': my_prediction})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+    return jsonify({'error': 'Invalid request method'}), 405
 
 if __name__ == '__main__':
     app.run(host="127.0.0.1", port="8080")
-#if __name__ == '__main__':
-#	app.run(debug=True)
